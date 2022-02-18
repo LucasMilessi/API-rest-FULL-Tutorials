@@ -4,7 +4,6 @@ import java.util.*;
 
 import com.books.integrate.spring.react.model.Tutorial;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -87,7 +86,7 @@ public class TutorialController {
 	}
 
 	//HttpStatus
-	@DeleteMapping("/tutorials/{id}")
+	@DeleteMapping("/tutorials/id/{id}")
 	public ResponseEntity<String> deleteTutorial(@PathVariable("id") long id) {
 		try {
 			tutorialRepository.deleteById(id);
@@ -122,19 +121,18 @@ public class TutorialController {
 		}
 	}
 
-	@DeleteMapping("/tutorials/{title}")
-	public ResponseEntity<String> findByTitle(@PathVariable("title") String title) {
-
-		Optional<List<Tutorial>> tutorials = Optional.ofNullable(tutorialRepository.findByTitleContaining(title));
+	@DeleteMapping("/tutorials/delete/{title}")
+	public ResponseEntity<String> deleteTutorialByTitle(@PathVariable("title") String title) {
+		Optional<Tutorial> tutorial = Optional.ofNullable(tutorialRepository.findByTitle(title));
 		try {
-			if (tutorials.isPresent()) {
-				Tutorial tutorialTitle = (Tutorial) tutorials.get();
-				Long id = tutorialTitle.getId();
-				tutorialRepository.deleteById(id);
+			if(tutorial.isPresent()) {
+				Tutorial tutorial1 = tutorial.get();
+				tutorialRepository.deleteById(tutorial1.getId());
 			}
-			return new ResponseEntity<>("Tutorials DELETE!! ", HttpStatus.NO_CONTENT);
-		} catch (Exception e) {
+			return new ResponseEntity<>("El tutorial con el titulo "+title+" fue eliminado",HttpStatus.NO_CONTENT);
+		}catch (Exception e){
 			return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
 		}
 	}
+
 }
