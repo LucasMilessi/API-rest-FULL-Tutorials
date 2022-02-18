@@ -63,7 +63,7 @@ public class TutorialController {
 	public ResponseEntity<Tutorial> createTutorial(@RequestBody Tutorial tutorial) {
 		try {
 			Tutorial _tutorial = tutorialRepository
-					.save(new Tutorial(tutorial.getTitle(), tutorial.getDescription(), false));
+					.save(new Tutorial(tutorial.getTitle(), tutorial.getDescription(), false, tutorial.getPrice()));
 			return new ResponseEntity<>(_tutorial, HttpStatus.CREATED);
 		} catch (Exception e) {
 			return new ResponseEntity<>(null, HttpStatus.EXPECTATION_FAILED);
@@ -144,10 +144,24 @@ public class TutorialController {
 				tutorial1.setTitle(tutorial.getTitle());
 				tutorial1.setDescription(tutorial.getDescription());
 				tutorial1.setPublished(tutorial.isPublished());
+				tutorial1.setPrice(tutorial.getPrice());
 				return new ResponseEntity<>(tutorialRepository.save(tutorial1), HttpStatus.OK);
 			}else{
 				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			}
+	}
+
+	@GetMapping("/tutorials/price/{price}")
+	public ResponseEntity<List<Tutorial>> tutorialByPrice(@PathVariable("price") double price){
+		try {
+			List<Tutorial> tutorial = tutorialRepository.findByPrice(price);
+			if (tutorial.isEmpty()) {
+				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			}
+			return new ResponseEntity<>(tutorial, HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+		}
 	}
 
 }
