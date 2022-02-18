@@ -135,4 +135,19 @@ public class TutorialController {
 		}
 	}
 
+	@PutMapping("/tutorials/title/{title}")
+	public ResponseEntity<Tutorial> updateTutorialByTitle(@PathVariable("title") String title, @RequestBody Tutorial tutorial){
+		Optional<Tutorial> tutorialByTitle = Optional.ofNullable(tutorialRepository.findByTitle(title));
+
+			if(tutorialByTitle.isPresent()){
+				Tutorial tutorial1 = tutorialByTitle.get();
+				tutorial1.setTitle(tutorial.getTitle());
+				tutorial1.setDescription(tutorial.getDescription());
+				tutorial1.setPublished(tutorial.isPublished());
+				return new ResponseEntity<>(tutorialRepository.save(tutorial1), HttpStatus.OK);
+			}else{
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			}
+	}
+
 }
